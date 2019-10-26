@@ -1,12 +1,3 @@
-// solves https://www.spoj.com/problems/PSEGTREE/
-#include <bits/stdc++.h>
-#define f first
-#define s second
-
-using namespace std;
-
-typedef long long ll;
-
 struct Node{
     Node *left, *right;
     int val;
