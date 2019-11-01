@@ -1,5 +1,5 @@
 struct DSU{ //Disjoint Set Union
-    vector <int> parent, sz; // sz es size
+    vector <int> parent, sz; // sz = size
     DSU(int n){
         parent.resize(n);
         sz.resize(n);
@@ -16,10 +16,10 @@ struct DSU{ //Disjoint Set Union
         a = find_set(a);
         b = find_set(b);
         if(a != b){
-            if(size[a] < size[b])
+            if(sz[a] < sz[b])
                 swap(a,b);
             parent[b] = a;
-            size[a] += size[b];
+            sz[a] += sz[b];
         }
     }
 };
