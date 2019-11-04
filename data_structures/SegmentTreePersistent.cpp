@@ -1,4 +1,5 @@
 struct Node{
+    // Usa log(n) memoria adicional por versión
     Node *left, *right;
     int val;
     Node(int a=0, Node *b=NULL, Node *c=NULL){

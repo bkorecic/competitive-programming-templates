@@ -1,4 +1,5 @@
 struct DSU{ //Disjoint Set Union
+    // Casi O(1) amortizado
     vector <int> parent, sz; // sz = size
     DSU(int n){
         parent.resize(n);

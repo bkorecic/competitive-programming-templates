@@ -1,6 +1,7 @@
 typedef long long ll;
 
 struct SegmentTree{
+    //O(n) build, O(nlogn) query&update
     vector <ll> tree;
     vector <ll> lazy;
     int N;

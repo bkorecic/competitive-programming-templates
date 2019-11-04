@@ -1,4 +1,5 @@
 struct SegmentTree{
+    // O(n) build, O(nlogn) query&update
 	vector <ll> tree;
 	int N;
 	SegmentTree(vector <ll> &A){
