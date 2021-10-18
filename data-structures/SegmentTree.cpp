@@ -1,58 +1,68 @@
+template <class T>
 struct SegmentTree{
-    // O(n) build, O(nlogn) query&update
-	vector <ll> tree;
-	int N;
-	SegmentTree(vector <ll> &A){
-		N = A.size();
-		tree.resize(4*N);
-		build(0, 0, N-1, A);
-	}
+  int N;
+  vector <T> tree;
+  SegmentTree(vector <T> &A){
+    N = A.size();
+    tree.resize(4*N);
+    build(0, 0, N-1, A);
+  }
 
-	ll merge(ll a, ll b){
-		return a + b;
-	}
+  T merge(T a, T b){ // !
+  }
+  
+  void build(int n, int i, int j, vector <T> &A){
+    if(i == j){
+      tree[n] = A[i];
+      return;
+    }
+    int mid = (i+j)/2;
+    build(2*n+1, i, mid, A);
+    build(2*n+2, mid+1, j, A);
+    tree[n] = merge(tree[2*n+1], tree[2*n+2]);
+  }
 
-	void build(int n, int l, int r, vector <ll> &A){
-		if(l == r){ // caso hoja
-			tree[n] = A[l];
-			return;
-		}
-		int mid = (l+r)/2; // caso general
-		build(2*n+1, l, mid, A);
-		build(2*n+2, mid+1, r, A);
-		tree[n] = merge(tree[2*n+1], tree[2*n+2]);
-	}
+  T query(int l, int r){
+    return query(0, 0, N-1, l, r);
+  }
 
-	ll query(int i, int j){
-		return(query(0, 0, N-1, i, j));
-	}
+  T query(int n, int i, int j, int l, int r){
+    if(l <= i && j <= r) return tree[n];
+    int mid = (i+j)/2;
+    if(mid < l || r < i)
+      return query(2*n+2, mid+1, j, l, r);
+    if(j < l || r < mid+1)
+      return query(2*n+1, i, mid, l, r);
+    return merge(
+        query(2*n+1, i, mid, l, r),
+        query(2*n+2, mid+1, j, l, r));
+  }
 
-	ll query(int n, int l, int r, int i, int j){
-		if(i <= l && r <= j){ // contenido completamente
-			return tree[n];
-		}
-		if(r < i || j < l){ // fuera del rango
-			return 0;
-		}
-		int mid = (l+r)/2; // contenido parcialmente
-		ll a = query(2*n+1, l, mid, i, j);
-		ll b = query(2*n+2, mid+1, r, i, j);
-		return merge(a, b);
-	}
+  void update(int t, T val){
+    update(0, 0, N-1, t, val);
+  }
+  
+  void update(int n, int i, int j, int t, T val){
+    if(t < i || j < t) return;
+    if(i == j){
+      tree[n] = val;
+      return;
+    }
+    int mid = (i+j)/2;
+    update(2*n+1, i, mid, t, val);
+    update(2*n+2, mid+1, j, t, val);
+    tree[n] = merge(tree[2*n+1], tree[2*n+2]);
+  }
 
-	void update(int i, ll v){
-		update(0, 0, N-1, i, v);
-	}
+  int select(T val){
+    return select(0, 0, N-1, val);
+  }
 
-	void update(int n, int l, int r, int i, ll v){
-		if(l == r && r == i){ // hoja
-			tree[n] = v;
-			return;
-		}
-		if(i < l || r < i) return; // fuera del rango
-		int mid = (l+r)/2; // contenido parcialmente
-		update(2*n+1, l, mid, i, v);
-		update(2*n+2, mid+1, r, i, v);
-		tree[n] = merge(tree[2*n+1], tree[2*n+2]);
-	}
+  int select(int n, int i, int j, T val){
+    int mid = (i+j)/2;
+    if(i==j && tree[n] >= val) return i;
+    if(tree[2*n+1] >= val) return search(2*n+1, i, mid, val);
+    else if(tree[2*n+2] >= val) return search(2*n+2, mid+1, j, val);
+    return -1;
+  }
 };

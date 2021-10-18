@@ -1,82 +1,78 @@
-typedef long long ll;
-
+template <class T>
 struct SegmentTree{
-    //O(n) build, O(nlogn) query&update
-    vector <ll> tree;
-    vector <ll> lazy;
-    int N;
-    SegmentTree(vector <ll> &A){
-        N = A.size();
-        tree.resize(4*N);
-        lazy.assign(4*N, 0);
-        build(0, 0, N-1, A);
+  int N;
+  vector <T> tree;
+  vector <T> lazy;
+  SegmentTree(vector <T> &A){
+    N = A.size();
+    tree.resize(4*N);
+    lazy.assign(4*N, T());
+    build(0, 0, N-1, A);
+  }
+
+  T merge(T a, T b){ // !
+  }
+  
+  void build(int n, int i, int j, vector <T> &A){
+    if(i == j){
+      tree[n] = A[i];
+      return;
     }
- 
-    ll merge(ll a, ll b){
-        return a+b;
-    }
- 
-    void build(int n, int l, int r, vector <ll> &A){
-        if(l == r){
-            tree[n] = A[l];
-            return;
+    int mid = (i+j)/2;
+    build(2*n+1, i, mid, A);
+    build(2*n+2, mid+1, j, A);
+    tree[n] = merge(tree[2*n+1], tree[2*n+2]);
+  }
+
+  T query(int l, int r){
+    return query(0, 0, N-1, l, r);
+  }
+
+  T query(int n, int i, int j, int l, int r){
+    if(lazy[n] != 0){
+        tree[n] += lazy[n]*(j-i+1);
+        if(i != j){
+            lazy[2*n+1] += lazy[n];
+            lazy[2*n+2] += lazy[n];
         }
-        int mid = (l+r)/2;
-        build(2*n+1, l, mid, A);
-        build(2*n+2, mid+1, r, A);
-        tree[n] = merge(tree[2*n+1], tree[2*n+2]);
+        lazy[n] = 0;
     }
- 
-    ll query(int i, int j){
-        return query(0, 0, N-1, i, j);
+    if(l <= i && j <= r) return tree[n];
+    int mid = (i+j)/2;
+    if(mid < l || r < i)
+      return query(2*n+2, mid+1, j, l, r);
+    if(j < l || r < mid+1)
+      return query(2*n+1, i, mid, l, r);
+    return merge(
+        query(2*n+1, i, mid, l, r),
+        query(2*n+2, mid+1, j, l, r));
+  }
+
+  void update(int l, int r, T val){
+    update(0, 0, N-1, l, r, val);
+  }
+  
+  void update(int n, int i, int j, int l, int r, T val){
+    if(lazy[n] != 0){
+        tree[n] += lazy[n]*(j-i+1);
+        if(i != j){
+            lazy[2*n+1] += lazy[n];
+            lazy[2*n+2] += lazy[n];
+        }
+        lazy[n] = 0;
     }
- 
-    ll query(int n, int l, int r, int i, int j){
-        if(lazy[n] != 0){ // update pendiente
-            tree[n] += lazy[n]*(r-l+1);
-            if(l != r){
-                lazy[2*n+1] += lazy[n];
-                lazy[2*n+2] += lazy[n];
-            }
-            lazy[n] = 0;
+    if(r < i || j < l) return;
+    if(l <= i && j <= r){
+        tree[n] += val*(j-i+1);
+        if(i != j){
+            lazy[2*n+1] += val;
+            lazy[2*n+2] += val;
         }
-        if(i <= l && r <= j){ // contenido completamente
-            return tree[n];
-        }
-        if(r < i || j < l){ // fuera del rango
-            return 0;
-        }
-        int mid = (l+r)/2; // contenido parcialmente
-        ll a = query(2*n+1, l, mid, i, j);
-        ll b = query(2*n+2, mid+1, r, i, j);
-        return merge(a,b);
+        return;
     }
- 
-    void update(int i, int j, ll val){
-        return update(0, 0, N-1, i, j, val);
-    }
- 
-    void update(int n, int l, int r, int i, int j, ll val){
-        if(lazy[n] != 0){ // update pendiente
-            tree[n] += lazy[n]*(r-l+1);
-            if(l != r){
-                lazy[2*n+1] += lazy[n];
-                lazy[2*n+2] += lazy[n];
-            }
-            lazy[n] = 0;
-        }
-        if(r < i || j < l) return; // fuera del rango
-        if(i <= l && r <= j){ // contenido completamente
-            tree[n] += val*(r-l+1);
-            if(l != r){
-                lazy[2*n+1] += val;
-                lazy[2*n+2] += val;
-            }
-            return;
-        }
-        int mid = (l+r)/2; // contenido parcialmente
-        update(2*n+1, l, mid, i, j, val);
-        update(2*n+2, mid+1, r, i, j, val);
-        tree[n] = merge(tree[2*n+1], tree[2*n+2]);
-    }
+    int mid = (i+j)/2;
+    update(2*n+1, i, mid, l, r, val);
+    update(2*n+2, mid+1, j, l, r, val);
+    tree[n] = merge(tree[2*n+1], tree[2*n+2]);
+  }
 };
