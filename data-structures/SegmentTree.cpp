@@ -2,23 +2,23 @@ template <class T>
 struct SegmentTree{
   int N;
   vector <T> tree;
-  SegmentTree(vector <T> &A){
-    N = A.size();
+  SegmentTree(int _N){
+    N = _N;
     tree.resize(4*N);
-    build(0, 0, N-1, A);
+    build(0, 0, N-1);
   }
 
   T merge(T a, T b){ // !
   }
   
-  void build(int n, int i, int j, vector <T> &A){
+  void build(int n, int i, int j){
     if(i == j){
-      tree[n] = A[i];
+      tree[n] = 1;
       return;
     }
     int mid = (i+j)/2;
-    build(2*n+1, i, mid, A);
-    build(2*n+2, mid+1, j, A);
+    build(2*n+1, i, mid);
+    build(2*n+2, mid+1, j);
     tree[n] = merge(tree[2*n+1], tree[2*n+2]);
   }
 
@@ -54,15 +54,16 @@ struct SegmentTree{
     tree[n] = merge(tree[2*n+1], tree[2*n+2]);
   }
 
-  int select(T val){
-    return select(0, 0, N-1, val);
+  int search(int from, T val){
+    if(!from) return search(0, 0, N-1, val);
+    return search(0, 0, N-1, val+query(0, from-1));
   }
 
-  int select(int n, int i, int j, T val){
-    int mid = (i+j)/2;
+  int search(int n, int i, int j, T val){
+    if(tree[n] < val) return -1;
     if(i==j && tree[n] >= val) return i;
+    int mid = (i+j)/2;
     if(tree[2*n+1] >= val) return search(2*n+1, i, mid, val);
-    else if(tree[2*n+2] >= val) return search(2*n+2, mid+1, j, val);
-    return -1;
+    else return search(2*n+2, mid+1, j, val-tree[2*n+1]);
   }
 };
