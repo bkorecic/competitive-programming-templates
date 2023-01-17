@@ -1,4 +1,4 @@
-template <class T>
+template <class T, T merge(T,T)>
 struct SegmentTree{
   int N;
   vector <T> tree;
@@ -8,17 +8,31 @@ struct SegmentTree{
     build(0, 0, N-1);
   }
 
-  T merge(T a, T b){ // !
+  SegmentTree(vector <T> &A){
+	  N = int(A.size());
+	  tree.resize(4*N);
+	  build(0, 0, N-1, A);
   }
-  
+
   void build(int n, int i, int j){
     if(i == j){
-      tree[n] = 1;
+      tree[n] = T(); // initial value
       return;
     }
     int mid = (i+j)/2;
     build(2*n+1, i, mid);
     build(2*n+2, mid+1, j);
+    tree[n] = merge(tree[2*n+1], tree[2*n+2]);
+  }
+
+  void build(int n, int i, int j, vector <T> &A){
+    if(i == j){
+      tree[n] = A[i]; // initial value
+      return;
+    }
+    int mid = (i+j)/2;
+    build(2*n+1, i, mid, A);
+    build(2*n+2, mid+1, j, A);
     tree[n] = merge(tree[2*n+1], tree[2*n+2]);
   }
 
