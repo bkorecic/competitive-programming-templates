@@ -1,14 +1,14 @@
 template <class T, T merge(T,T)>
-struct SegmentTree{
+struct segment_tree{
   int N;
   vector <T> tree;
-  SegmentTree(int _N){
+  segment_tree(int _N){
     N = _N;
     tree.resize(4*N);
     build(0, 0, N-1);
   }
 
-  SegmentTree(vector <T> &A){
+  segment_tree(vector <T> &A){
 	  N = int(A.size());
 	  tree.resize(4*N);
 	  build(0, 0, N-1, A);

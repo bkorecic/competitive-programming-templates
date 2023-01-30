@@ -2,13 +2,13 @@
 // Additional O(log(n)) memory per update
 // Tested on https://cses.fi/problemset/task/1737
 template <typename T, T merge(T, T)>
-struct Node{
-    Node *left=0, *right=0;
+struct st_node{
+    st_node *left=0, *right=0;
 	int i, j;
     T val;
-	Node() {}
-	Node(int _i, int _j) : i(_i), j(_j) {}
-	Node(vector <T> &A){
+	st_node() {}
+	st_node(int _i, int _j) : i(_i), j(_j) {}
+	st_node(vector <T> &A){
 		int N = int(A.size());
 		i = 0, j = N-1;
 		build(A);
@@ -20,23 +20,23 @@ struct Node{
 			return;
 		}
         int mid = (i+j)/2;
-        left = new Node<T,merge>(i, mid);
-        right = new Node<T,merge>(mid+1, j);
+        left = new st_node<T,merge>(i, mid);
+        right = new st_node<T,merge>(mid+1, j);
         left->build(A);
         right->build(A);
 		val = merge(left->val, right->val);
     }
 
-    Node *update(int t, ll v){
+    st_node *update(int t, ll v){
         if(t < i || j < t){
             return this;
         }
         if(i == j){
-            Node *ret = new Node<T,merge>(*this);
+            st_node *ret = new st_node<T,merge>(*this);
 			ret->val = v;
             return ret;
         }
-        Node *ret = new Node<T,merge>(i, j);
+        st_node *ret = new st_node<T,merge>(i, j);
         ret->left = left->update(t, v);
         ret->right = right->update(t, v);
         ret->val = merge(ret->left->val, ret->right->val);

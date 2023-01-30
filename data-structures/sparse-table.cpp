@@ -1,10 +1,10 @@
-struct SparseTable{
+struct sparse_table{
     // O(nlogn) preprocessing, O(1) query en rango
     // para función idempotente (como min, max, gcd, etc)
     int n;
     vector <int> logs;
     vector <vector<ll>> table;
-    SparseTable(vector <ll> &A){
+    sparse_table(vector <ll> &A){
         n = A.size();
         logs.resize(n+1);
         logs[1] = 0;
