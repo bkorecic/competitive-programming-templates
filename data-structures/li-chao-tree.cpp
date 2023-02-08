@@ -77,3 +77,11 @@ struct lc_node{
 		return val.eval(x);
 	}
 };
+
+/* Example:
+lc_node *root = new lc_node(min_val, max_val, line(b[0],0));
+for(int i=1; i<n; i++){
+	dp[i] = root->query(a[i]);
+	root->add_line(b[i],dp[i]);
+}
+*/
